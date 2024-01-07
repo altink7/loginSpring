@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class LoginController {
 
     @GetMapping("/")
-    public String loginError() {
+    public String secured() {
         return "secured";
     }
 }
