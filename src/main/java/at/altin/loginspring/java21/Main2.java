@@ -4,8 +4,8 @@ import static at.altin.loginspring.java21.NewFeatures.*;
 void main(String[] args) {
         int numberOfThreads = 100;
 
-        //when both methods are called, the virtual thread method waits for the normal thread method to finish
-        // therefore the time is much longer
+        //when both methods are called, the virtual thread method waits for the normal thread method to finish,
+        // therefore, the time is much longer
         testVirtualThread(numberOfThreads);
         testNormalThread(numberOfThreads);
 
