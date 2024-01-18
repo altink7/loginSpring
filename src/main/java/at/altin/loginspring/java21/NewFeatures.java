@@ -1,5 +1,6 @@
 package at.altin.loginspring.java21;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,6 +48,49 @@ public class NewFeatures {
                 .filter(Objects::nonNull)
                 .filter(s -> s instanceof String)
                 .forEach(_ -> System.out.println("Hello das ist ohne Variable nur einmal"));
+    }
 
+
+    public static void testVirtualThread(int numberOfThreads) throws InterruptedException {
+        long startTime = System.currentTimeMillis();
+
+        List<Thread> virtualThreads = new ArrayList<>();
+        for (int i = 0; i < numberOfThreads; i++) {
+            Thread virtualThread = Thread.ofVirtual().start(() -> {
+                int result = 0;
+                for (int j = 0; j < 1000000; j++) {
+                    result += j;
+                }
+            });
+            virtualThreads.add(virtualThread);
+        }
+
+        virtualThreads.forEach(Thread::join);
+
+        long endTime = System.currentTimeMillis();
+        System.out.println(STR."Virtual Thread Performance: \{endTime - startTime} ms");
+    }
+
+    public static void testNormalThread(int numberOfThreads) throws InterruptedException {
+        long startTime = System.currentTimeMillis();
+
+        List<Thread> normalThreads = new ArrayList<>();
+        for (int i = 0; i < numberOfThreads; i++) {
+            Thread normalThread = new Thread(() -> {
+                int result = 0;
+                for (int j = 0; j < 1000000; j++) {
+                    result += j;
+                }
+            });
+            normalThread.start();
+            normalThreads.add(normalThread);
+        }
+
+        for (Thread normalThread : normalThreads) {
+            normalThread.join();
+        }
+
+        long endTime = System.currentTimeMillis();
+        System.out.println(STR."Normal Thread Performance: \{endTime - startTime} ms");
     }
 }
