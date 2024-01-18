@@ -2,6 +2,7 @@ package at.altin.loginspring.java21;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * new java 21 switch
@@ -23,12 +24,13 @@ public class NewFeatures {
         System.out.println(STR."Hello \{name}!");
     }
 
-    public static void justNormalCoding(List<String> strList) {
+    public static void justNormalCoding(List<Object> strList) {
         strList.forEach(System.out::println);
         strList.forEach(_ -> System.out.println("Hello"));
 
-        //do alot of lambda stuff
         strList.stream()
+                .filter(s -> s instanceof String)
+                .map(s -> (String) s)
                 .map(String::toUpperCase)
                 .mapMultiToInt((s, consumer) -> {
                     if (s.startsWith("A")) {
@@ -38,6 +40,14 @@ public class NewFeatures {
                 .mapToObj(i -> STR."die Laenge:\{i} ")
                 .forEach(System.out::println);
 
+        strList.stream()
+                .flatMap(s -> STR."Hello \{s}!".lines())
+                .forEach(System.out::println);
+
+        strList.stream()
+                .filter(Objects::nonNull)
+                .filter(s -> s instanceof String)
+                .forEach(_ -> System.out.println("Hello das ist ohne Variable nur einmal"));
 
     }
 }
