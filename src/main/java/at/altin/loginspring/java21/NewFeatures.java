@@ -3,6 +3,9 @@ package at.altin.loginspring.java21;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.stream.IntStream;
 
 /**
  * new java 21 switch
@@ -54,24 +57,26 @@ public class NewFeatures {
     public static void testVirtualThread(int numberOfThreads) {
         long startTime = System.currentTimeMillis();
 
-        List<Thread> virtualThreads = new ArrayList<>();
+        ExecutorService executor = java.util.concurrent.Executors.newVirtualThreadPerTaskExecutor();
+
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
         for (int i = 0; i < numberOfThreads; i++) {
-            Thread virtualThread = Thread.ofVirtual().start(() -> {
-                int result = 0;
-                for (int j = 0; j < 1000000; j++) {
-                    result += j;
-                }
-            });
-            virtualThreads.add(virtualThread);
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                int _ = IntStream.range(0, 1000000)
+                        .parallel()
+                        .map(j -> j * j)
+                        .sum();
+            }, executor);
+            futures.add(future);
         }
 
-        virtualThreads.forEach(thread -> {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                // do nothing
-            }
-        });
+        CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+        try {
+            allOf.get();
+        } catch (Exception ignored) {
+        }
+
+        executor.shutdown();
 
         long endTime = System.currentTimeMillis();
         System.out.println(STR."Virtual Thread Performance: \{endTime - startTime} ms");
@@ -83,20 +88,19 @@ public class NewFeatures {
         List<Thread> normalThreads = new ArrayList<>();
         for (int i = 0; i < numberOfThreads; i++) {
             Thread normalThread = new Thread(() -> {
-                int result = 0;
-                for (int j = 0; j < 1000000; j++) {
-                    result += j;
-                }
+                int _ = IntStream.range(0, 1000000)
+                        .parallel()
+                        .map(j -> j * j)
+                        .sum();
             });
             normalThread.start();
             normalThreads.add(normalThread);
         }
 
         for (Thread normalThread : normalThreads) {
-            try{
+            try {
                 normalThread.join();
-            } catch (InterruptedException e) {
-                // do nothing
+            } catch (InterruptedException ignored) {
             }
         }
 
