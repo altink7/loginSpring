@@ -51,7 +51,7 @@ public class NewFeatures {
     }
 
 
-    public static void testVirtualThread(int numberOfThreads) throws InterruptedException {
+    public static void testVirtualThread(int numberOfThreads) {
         long startTime = System.currentTimeMillis();
 
         List<Thread> virtualThreads = new ArrayList<>();
@@ -65,13 +65,19 @@ public class NewFeatures {
             virtualThreads.add(virtualThread);
         }
 
-        virtualThreads.forEach(Thread::join);
+        virtualThreads.forEach(thread -> {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                // do nothing
+            }
+        });
 
         long endTime = System.currentTimeMillis();
         System.out.println(STR."Virtual Thread Performance: \{endTime - startTime} ms");
     }
 
-    public static void testNormalThread(int numberOfThreads) throws InterruptedException {
+    public static void testNormalThread(int numberOfThreads) {
         long startTime = System.currentTimeMillis();
 
         List<Thread> normalThreads = new ArrayList<>();
@@ -87,7 +93,11 @@ public class NewFeatures {
         }
 
         for (Thread normalThread : normalThreads) {
-            normalThread.join();
+            try{
+                normalThread.join();
+            } catch (InterruptedException e) {
+                // do nothing
+            }
         }
 
         long endTime = System.currentTimeMillis();
