@@ -14,6 +14,14 @@ void main(String[] args) {
 
         //when only the normal thread method is called, the time is longer
         testNormalThread(numberOfThreads);
+
+        //Example:
+        //Virtual Thread Performance: 570 ms
+        //Normal Thread Performance: 76 ms
+        //Virtual Thread Performance: 6 ms
+        //Normal Thread Performance: 23 ms
+        //
+        //Process finished with exit code 0
 }
 
 
